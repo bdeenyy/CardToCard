@@ -8,18 +8,19 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
+
 @Repository
 public class CardRepository {
 
-    private Map<String, Card> cardMap = new HashMap<>();
+    private final Map<String, Card> cardMap = new HashMap<>();
 
     public CardRepository() {
         // add some test data
         Card card1 = new Card("1234567890123456", "Denis Bykov");
         card1.setValidTill("12/23");
         card1.setCVV("123");
-        card1.deposit(new Amount(new BigDecimal("100000"), "USD"));
-        card1.deposit(new Amount(new BigDecimal("500000"), "EUR"));
+        card1.deposit(new Amount(new BigDecimal("1000"), "USD"));
+        card1.deposit(new Amount(new BigDecimal("5000"), "EUR"));
         cardMap.put(card1.getNumber(), card1);
 
         Card card2 = new Card("9876543210987654", "Kol Korneev");

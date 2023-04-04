@@ -2,7 +2,6 @@ package com.example.cardtocard.controller;
 
 import com.example.cardtocard.model.TransferRequest;
 import com.example.cardtocard.service.TransferService;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -24,8 +23,10 @@ public class TransferController {
 
     @PostMapping
     public ResponseEntity<String> transfer(@RequestBody TransferRequest transferRequest) {
-        boolean success = transferService.transfer(transferRequest);
-        return success ? ResponseEntity.ok("Transfer successful")
-                : ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Transfer unsuccessful");
+        if (transferService.transfer(transferRequest)) {
+            return ResponseEntity.ok("Transfer successful");
+        } else {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Transfer unsuccessful");
+        }
     }
 }

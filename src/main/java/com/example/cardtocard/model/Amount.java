@@ -12,6 +12,7 @@ public class Amount {
         this.currency = currency;
     }
 
+
     public BigDecimal getValue() {
         return value;
     }
@@ -26,5 +27,13 @@ public class Amount {
 
     public void setCurrency(String currency) {
         this.currency = currency;
+    }
+
+    public Amount add(Amount commission) {
+        return new Amount(value.add(commission.value), currency);
+    }
+
+    public Amount multiply(BigDecimal valueOf) {
+        return new Amount(value.multiply(valueOf), currency);
     }
 }
