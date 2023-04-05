@@ -7,11 +7,10 @@ public class Amount {
     private BigDecimal value;
     private String currency;
 
-    public Amount(BigDecimal value, String currency) {
+    public Amount(String currency, BigDecimal value) {
         this.value = value;
         this.currency = currency;
     }
-
 
     public BigDecimal getValue() {
         return value;
@@ -30,10 +29,10 @@ public class Amount {
     }
 
     public Amount add(Amount commission) {
-        return new Amount(value.add(commission.value), currency);
+        return new Amount(currency, value.add(commission.value));
     }
 
     public Amount multiply(BigDecimal valueOf) {
-        return new Amount(value.multiply(valueOf), currency);
+        return new Amount(currency, value.multiply(valueOf));
     }
 }

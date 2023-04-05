@@ -13,9 +13,19 @@ public class Card {
     private String CVV;
     private Map<String, BigDecimal> balanceMap = new HashMap<>();
 
-    public Card(String number, String holderName) {
+
+    public Card(String number, String validTill, String CVV) {
         this.number = number;
-        this.holderName = holderName;
+        this.validTill = validTill;
+        this.CVV = CVV;
+        CurrencyBalanceGenerator balanceGenerator = new CurrencyBalanceGenerator();
+        this.balanceMap = balanceGenerator.generateRandomBalances();
+    }
+
+    public Card(String number) {
+        this.number = number;
+        CurrencyBalanceGenerator balanceGenerator = new CurrencyBalanceGenerator();
+        this.balanceMap = balanceGenerator.generateRandomBalances();
     }
 
     public boolean isValid(String validTill, String CVV) {
@@ -24,7 +34,7 @@ public class Card {
 
     public boolean withdraw(Amount amount) {
         BigDecimal balance = balanceMap.get(amount.getCurrency());
-        if(balance == null || balance.compareTo(amount.getValue()) < 0) {
+        if (balance == null || balance.compareTo(amount.getValue()) < 0) {
             return false;
         }
         balanceMap.put(amount.getCurrency(), balance.subtract(amount.getValue()));

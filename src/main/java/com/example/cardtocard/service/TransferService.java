@@ -19,14 +19,20 @@ public class TransferService {
     private TransferLogger transferLogger;
 
 
-
     public boolean transfer(TransferRequest transferRequest) {
+        cardRepository.saveCard(new Card(transferRequest.getCardFromNumber(),
+                transferRequest.getCardFromValidTill(),
+                transferRequest.getCardFromCVV()));
+        cardRepository.saveCard(new Card(transferRequest.getCardToNumber()));
+
         Card cardFrom = cardRepository.getCardByNumber(transferRequest.getCardFromNumber());
         Card cardTo = cardRepository.getCardByNumber(transferRequest.getCardToNumber());
-        if (cardFrom == null || cardTo == null || !cardFrom.isValid(transferRequest.getCardFromValidTill(), transferRequest.getCardFromCVV())) {
+
+        if (cardFrom == null || cardTo == null || !cardFrom.isValid(transferRequest.getCardFromValidTill(),
+                transferRequest.getCardFromCVV())) {
             return false;
         }
-        Amount amount = new Amount(transferRequest.getAmountValue(), transferRequest.getAmountCurrency());
+        Amount amount = new Amount(transferRequest.getAmountCurrency(), transferRequest.getAmountValue());
         Amount commission = amount.multiply(BigDecimal.valueOf(0.01)); // 1% комиссии
         boolean success = cardFrom.withdraw(amount.add(commission));
         cardTo.deposit(amount);
