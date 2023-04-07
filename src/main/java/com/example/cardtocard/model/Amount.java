@@ -1,32 +1,35 @@
 package com.example.cardtocard.model;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 
 public class Amount {
 
-    private BigDecimal value;
+
+    @JsonProperty("currency")
     private String currency;
+
+    @JsonProperty("value")
+    private BigDecimal value;
+
+    public Amount() { }
 
     public Amount(String currency, BigDecimal value) {
         this.value = value;
         this.currency = currency;
     }
 
+
     public BigDecimal getValue() {
         return value;
     }
 
-    public void setValue(BigDecimal value) {
-        this.value = value;
-    }
 
     public String getCurrency() {
         return currency;
     }
 
-    public void setCurrency(String currency) {
-        this.currency = currency;
-    }
 
     public Amount add(Amount commission) {
         return new Amount(currency, value.add(commission.value));
