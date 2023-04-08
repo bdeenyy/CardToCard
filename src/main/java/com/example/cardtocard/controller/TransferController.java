@@ -1,9 +1,9 @@
 package com.example.cardtocard.controller;
 
+import com.example.cardtocard.model.ResponseBuilder;
 import com.example.cardtocard.model.TransferRequest;
 import com.example.cardtocard.service.TransferService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -18,13 +18,12 @@ public class TransferController {
         this.transferService = transferService;
     }
 
+
     @PostMapping("/transfer")
-    public ResponseEntity<String> transfer(@RequestBody TransferRequest transferRequest) {
-        if (transferService.transfer(transferRequest)) {
-            return ResponseEntity.ok("Transfer successful");
-        } else {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Transfer unsuccessful");
-        }
+    public ResponseEntity<?> transfer(@RequestBody TransferRequest transferRequest) {
+        String operationId = transferService.transfer(transferRequest);
+        ResponseBuilder builder = new ResponseBuilder();
+        return builder.buildResponse(operationId);
     }
 
 }

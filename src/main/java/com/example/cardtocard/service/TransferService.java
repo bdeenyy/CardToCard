@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.UUID;
 
 @Service
 public class TransferService {
@@ -18,28 +19,26 @@ public class TransferService {
 
     @Autowired
     private TransferLogger transferLogger;
-
-
-    public boolean transfer(@NotNull TransferRequest transferRequest) {
-        cardRepository.saveCard(new Card(transferRequest.getCardFromNumber(),
-                transferRequest.getCardFromValidTill(),
-                transferRequest.getCardFromCVV()));
+    public String transfer(@NotNull TransferRequest transferRequest) {
+        String operationId = UUID.randomUUID().toString().substring(3, 7);
+        cardRepository.saveCard(new Card(transferRequest.getCardFromNumber(), transferRequest.getCardFromValidTill(), transferRequest.getCardFromCVV()));
         cardRepository.saveCard(new Card(transferRequest.getCardToNumber()));
-
         Card cardFrom = cardRepository.getCardByNumber(transferRequest.getCardFromNumber());
         Card cardTo = cardRepository.getCardByNumber(transferRequest.getCardToNumber());
 
         if (cardFrom == null || cardTo == null || !cardFrom.isValid(transferRequest.getCardFromValidTill(),
                 transferRequest.getCardFromCVV())) {
-            return false;
+            return null;
         }
 
-
-        Amount amount = new Amount(transferRequest.getAmount().getCurrency(), transferRequest.getAmount().getValue());
+        Amount amount = new Amount(transferRequest.getAmount().getCurrency(),
+                transferRequest.getAmount().getValue()).multiply(BigDecimal.valueOf(0.01)); // format 0.00
         Amount commission = amount.multiply(BigDecimal.valueOf(0.01)); // 1% комиссии
+
         boolean success = cardFrom.withdraw(amount.add(commission));
         cardTo.deposit(amount);
-        transferLogger.logTransfer(cardFrom, cardTo, amount, commission, success);
-        return success;
+        transferLogger.logTransfer(cardFrom, cardTo, amount, commission, success, operationId);
+        return operationId;
     }
+
 }

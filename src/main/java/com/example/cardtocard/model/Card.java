@@ -42,13 +42,10 @@ public class Card {
         balanceMap.put(amount.getCurrency(), balance.subtract(amount.getValue()));
         return true;
     }
-
     public void deposit(@NotNull Amount amount) {
         balanceMap.merge(amount.getCurrency(), amount.getValue(), BigDecimal::add);
     }
-
     public String getNumber() {
         return number;
     }
-
 }

@@ -21,8 +21,8 @@ public class TransferLogger {
         logger.addHandler(fileHandler);
     }
 
-    public void logTransfer(Card cardFrom, Card cardTo, Amount amount, Amount commission, boolean success) {
-        String message = "Transfer " + (success ? "successful" : "unsuccessful") + ", from " + cardFrom.getNumber() +
+    public void logTransfer(Card cardFrom, Card cardTo, Amount amount, Amount commission, boolean success, String operationId) {
+        String message = "ID: " +operationId + " Transfer " + (success ? "successful" : "unsuccessful") + ", from " + cardFrom.getNumber() +
                 " to " + cardTo.getNumber() + ", amount: " + amount.getValue() + " " + amount.getCurrency() +
                 ", commission: " + commission.getValue() + " " + commission.getCurrency();
         logger.log(Level.INFO, message);
