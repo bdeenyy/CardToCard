@@ -13,7 +13,7 @@ public class CurrencyBalanceGenerator {
     public Map<String, BigDecimal> generateRandomBalances() {
         Map<String, BigDecimal> balanceMap = new HashMap<>();
         for (String currency : CURRENCIES) {
-            BigDecimal amount = BigDecimal.valueOf(random.nextDouble() * 100000).setScale(2, RoundingMode.HALF_UP);
+            BigDecimal amount = BigDecimal.valueOf(random.nextDouble() * 10000).setScale(2, RoundingMode.HALF_UP);
             balanceMap.put(currency, amount);
         }
         return balanceMap;

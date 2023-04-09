@@ -9,8 +9,11 @@ import java.util.concurrent.ConcurrentMap;
 
 @Repository
 public class CardRepository {
-    private final ConcurrentMap<String, Card> cardMap = new ConcurrentHashMap<>();
+    private ConcurrentMap<String, Card> cardMap = new ConcurrentHashMap<>();
 
+    public CardRepository() {
+        this.cardMap = new ConcurrentHashMap<>();
+    }
     public Card getCardByNumber(String number) {
         Card card = cardMap.get(number);
         return card != null ? card : new Card(number);

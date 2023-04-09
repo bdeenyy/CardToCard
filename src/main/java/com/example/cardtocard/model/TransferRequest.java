@@ -5,11 +5,11 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class TransferRequest {
 
-    private final String cardFromNumber;
-    private final String cardFromValidTill;
-    private final String cardFromCVV;
-    private final String cardToNumber;
-    private final Amount amount;
+    private String cardFromNumber;
+    private String cardFromValidTill;
+    private String cardFromCVV;
+    private String cardToNumber;
+    private Amount amount;
 
     @JsonCreator
     public TransferRequest(@JsonProperty("cardFromNumber") String cardFromNumber,
@@ -22,6 +22,10 @@ public class TransferRequest {
         this.cardFromCVV = cardFromCVV;
         this.cardFromValidTill = cardFromValidTill;
         this.amount = amount;
+    }
+
+    public TransferRequest() {
+
     }
 
 
@@ -49,4 +53,23 @@ public class TransferRequest {
         return amount;
     }
 
+    public void setCardFromNumber(String cardFromNumber) {
+        this.cardFromNumber = cardFromNumber;
+    }
+
+    public void setCardFromValidTill(String cardFromValidTill) {
+        this.cardFromValidTill = cardFromValidTill;
+    }
+
+    public void setCardFromCVV(String cardFromCVV) {
+        this.cardFromCVV = cardFromCVV;
+    }
+
+    public void setCardToNumber(String cardToNumber) {
+        this.cardToNumber = cardToNumber;
+    }
+
+    public void setAmount(Amount amount) {
+        this.amount = amount;
+    }
 }

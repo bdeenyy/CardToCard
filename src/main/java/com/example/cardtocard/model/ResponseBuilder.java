@@ -8,7 +8,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ResponseBuilder {
-    public ResponseEntity<?> buildResponse(String operationId) {
+    public static ResponseEntity<?> buildResponse(String operationId) {
         if (operationId != null) {
             Map<String, String> response = new HashMap<>();
             response.put("operationId", operationId);

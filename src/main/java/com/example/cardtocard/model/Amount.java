@@ -1,13 +1,11 @@
 package com.example.cardtocard.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.jetbrains.annotations.NotNull;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class Amount {
-
 
     @JsonProperty("currency")
     private String currency;
@@ -26,18 +24,15 @@ public class Amount {
         return value;
     }
 
-
     public String getCurrency() {
         return currency;
     }
 
-
-    public Amount add(@NotNull Amount commission) {
+    public Amount add(Amount commission) {
         return new Amount(currency, value.add(commission.value));
     }
 
     public Amount multiply(BigDecimal valueOf) {
         return new Amount(currency, value.multiply(valueOf).setScale(2, RoundingMode.HALF_UP));
     }
-
 }

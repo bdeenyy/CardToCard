@@ -1,11 +1,8 @@
 package com.example.cardtocard.model;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
-
 
 public class Card {
 
@@ -14,7 +11,6 @@ public class Card {
     private String validTill;
     private String CVV;
     private Map<String, BigDecimal> balanceMap = new HashMap<>();
-
 
     public Card(String number, String validTill, String CVV) {
         this.number = number;
@@ -34,7 +30,7 @@ public class Card {
         return this.validTill.equals(validTill) && this.CVV.equals(CVV);
     }
 
-    public boolean withdraw(@NotNull Amount amount) {
+    public boolean withdraw(Amount amount) {
         BigDecimal balance = balanceMap.get(amount.getCurrency());
         if (balance == null || balance.compareTo(amount.getValue()) < 0) {
             return false;
@@ -42,7 +38,7 @@ public class Card {
         balanceMap.put(amount.getCurrency(), balance.subtract(amount.getValue()));
         return true;
     }
-    public void deposit(@NotNull Amount amount) {
+    public void deposit(Amount amount) {
         balanceMap.merge(amount.getCurrency(), amount.getValue(), BigDecimal::add);
     }
     public String getNumber() {
