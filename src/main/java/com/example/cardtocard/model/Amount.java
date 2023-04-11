@@ -1,16 +1,12 @@
 package com.example.cardtocard.model;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
-
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 public class Amount {
 
-    @JsonProperty("currency")
     private String currency;
 
-    @JsonProperty("value")
     private BigDecimal value;
 
     public Amount() { }

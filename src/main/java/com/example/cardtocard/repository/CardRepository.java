@@ -1,25 +1,16 @@
 package com.example.cardtocard.repository;
 
 import com.example.cardtocard.model.Card;
-import org.springframework.stereotype.Repository;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
+import java.util.Collection;
 
+public interface CardRepository {
 
-@Repository
-public class CardRepository {
-    private ConcurrentMap<String, Card> cardMap = new ConcurrentHashMap<>();
+    void addCard(Card card);
 
-    public CardRepository() {
-        this.cardMap = new ConcurrentHashMap<>();
-    }
-    public Card getCardByNumber(String number) {
-        Card card = cardMap.get(number);
-        return card != null ? card : new Card(number);
-    }
+    void removeCard(String number);
 
-    public void saveCard(Card card) {
-        cardMap.put(card.getNumber(), card);
-    }
+    Card getCard(String number);
+
+    Collection<Card> getAllCards();
 }

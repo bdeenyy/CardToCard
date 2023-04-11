@@ -1,7 +1,6 @@
-package com.example.cardtocard.model;
+package com.example.cardtocard.dto;
 
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+import com.example.cardtocard.model.Amount;
 
 public class TransferRequest {
 
@@ -11,12 +10,11 @@ public class TransferRequest {
     private String cardToNumber;
     private Amount amount;
 
-    @JsonCreator
-    public TransferRequest(@JsonProperty("cardFromNumber") String cardFromNumber,
-                           @JsonProperty("cardToNumber") String cardToNumber,
-                           @JsonProperty("cardFromCVV") String cardFromCVV,
-                           @JsonProperty("cardFromValidTill") String cardFromValidTill,
-                           @JsonProperty("amount") Amount amount) {
+    public TransferRequest(String cardFromNumber,
+                           String cardToNumber,
+                           String cardFromCVV,
+                           String cardFromValidTill,
+                           Amount amount) {
         this.cardFromNumber = cardFromNumber;
         this.cardToNumber = cardToNumber;
         this.cardFromCVV = cardFromCVV;
@@ -25,29 +23,23 @@ public class TransferRequest {
     }
 
     public TransferRequest() {
-
     }
-
 
     public String getCardFromNumber() {
         return cardFromNumber;
     }
 
-
     public String getCardFromValidTill() {
         return cardFromValidTill;
     }
-
 
     public String getCardFromCVV() {
         return cardFromCVV;
     }
 
-
     public String getCardToNumber() {
         return cardToNumber;
     }
-
 
     public Amount getAmount() {
         return amount;

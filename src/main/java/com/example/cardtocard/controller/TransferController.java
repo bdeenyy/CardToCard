@@ -1,18 +1,19 @@
 package com.example.cardtocard.controller;
 
-import com.example.cardtocard.model.ConfirmRequest;
-import com.example.cardtocard.model.ResponseBuilder;
-import com.example.cardtocard.model.TransferRequest;
+import com.example.cardtocard.exception.*;
+import com.example.cardtocard.dto.ConfirmRequest;
+import com.example.cardtocard.dto.TransferRequest;
 import com.example.cardtocard.service.TransferService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
-@RequestMapping("/")
+@RequestMapping()
 public class TransferController {
 
     private final TransferService transferService;
@@ -23,14 +24,16 @@ public class TransferController {
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<?> transfer(@RequestBody TransferRequest transferRequest) {
+    public ResponseEntity<?> transfer(@RequestBody TransferRequest transferRequest) throws UnauthorizedException, BadRequestException {
         String operationId = transferService.transfer(transferRequest);
-        return ResponseBuilder.buildResponse(operationId);
+        Map<String, String> response = new HashMap<>();
+        response.put("operationId", operationId);
+        return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("/confirmOperation")
-    public ResponseEntity<?> confirmOperation(@RequestBody ConfirmRequest confirmRequest) throws IOException {
-        String operationId = transferService.confirmOperation(confirmRequest);
-        return ResponseBuilder.buildResponse(operationId);
+    @PostMapping("/confirmOperation") public ResponseEntity<?> confirmOperation(@RequestBody ConfirmRequest confirmRequest) throws BadRequestException {
+        String response = transferService.confirmOperation(confirmRequest.getOperationId());
+        return ResponseEntity.ok(new ConfirmRequest(response));
     }
+        
 }

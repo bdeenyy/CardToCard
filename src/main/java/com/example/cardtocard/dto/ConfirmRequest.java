@@ -1,26 +1,19 @@
-package com.example.cardtocard.model;
-
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonProperty;
+package com.example.cardtocard.dto;
 
 public class ConfirmRequest {
     private String operationId;
     private String code;
 
-    @JsonCreator
-    public ConfirmRequest(@JsonProperty("operationId")String operationId,
-                          @JsonProperty("code")String code) {
+    public ConfirmRequest(String code, String operationId) {
         this.operationId = operationId;
         this.code = code;
     }
 
-    public ConfirmRequest(Object operationId) {
-        this.operationId = (String) operationId;
-        this.code = null;
+    public ConfirmRequest(String operationId) {
+        this.operationId =  operationId;
     }
 
     public ConfirmRequest() {
-
     }
 
     public String getOperationId() {
