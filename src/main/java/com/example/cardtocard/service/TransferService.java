@@ -24,10 +24,6 @@ public class TransferService {
         this.transferLogger = transferLogger;
     }
 
-    public TransferService() {
-
-    }
-
     public String transfer(TransferRequest transferRequest) throws UnauthorizedException, BadRequestException {
         String operationId = UUID.randomUUID().toString().substring(3, 7);
         cardRepositoryImpl.saveCard(new Card(transferRequest.getCardFromNumber(), transferRequest.getCardFromValidTill(), transferRequest.getCardFromCVV()));
