@@ -1,7 +1,5 @@
 package com.example.cardtocard.model;
 
-import com.example.cardtocard.utils.BalanceGenerator;
-
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
@@ -18,14 +16,14 @@ public class Card {
         this.number = number;
         this.validTill = validTill;
         this.CVV = CVV;
-        BalanceGenerator balanceGenerator = new BalanceGenerator();
-        this.balanceMap = balanceGenerator.generateRandomBalances();
+        this.balanceMap = balanceMap;
+        balanceMap.put("RUR", BigDecimal.valueOf(10000));
     }
 
     public Card(String number) {
         this.number = number;
-        BalanceGenerator balanceGenerator = new BalanceGenerator();
-        this.balanceMap = balanceGenerator.generateRandomBalances();
+        this.balanceMap = balanceMap;
+        balanceMap.put("RUR", BigDecimal.valueOf(10000));
     }
 
     public String getNumber() {
@@ -43,7 +41,14 @@ public class Card {
         balanceMap.put(amount.getCurrency(), balance.subtract(amount.getValue()));
         return true;
     }
+
     public void deposit(Amount amount) {
-        balanceMap.merge(amount.getCurrency(), amount.getValue(), BigDecimal::add);
+        BigDecimal balance = balanceMap.get(amount.getCurrency());
+        if (balance == null) {
+            balanceMap.put(amount.getCurrency(), amount.getValue());
+        } else {
+            balanceMap.put(amount.getCurrency(), balance.add(amount.getValue()));
+        }
     }
+
 }
