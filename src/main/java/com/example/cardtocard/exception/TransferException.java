@@ -20,7 +20,6 @@ public class TransferException extends Throwable {
         return new ErrorResponse(HttpStatus.UNAUTHORIZED.value(), ex.getMessage());
     }
 
-
         @ExceptionHandler(value = {NotFoundException.class})
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ErrorResponse handleInternalServerErrorException(NotFoundException ex) {

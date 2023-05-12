@@ -1,6 +1,5 @@
 package com.example.cardtocard.controller;
 
-import com.example.cardtocard.exception.*;
 import com.example.cardtocard.dto.ConfirmRequest;
 import com.example.cardtocard.dto.TransferRequest;
 import com.example.cardtocard.service.TransferService;
@@ -12,10 +11,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 @RestController
-@CrossOrigin
 @RequestMapping()
 public class TransferController {
-
     private final TransferService transferService;
 
     @Autowired
@@ -24,16 +21,16 @@ public class TransferController {
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<?> transfer(@RequestBody TransferRequest transferRequest) throws UnauthorizedException, BadRequestException {
+    public ResponseEntity<Map<String, String>> transfer(@RequestBody TransferRequest transferRequest) {
         String operationId = transferService.transfer(transferRequest);
         Map<String, String> response = new HashMap<>();
         response.put("operationId", operationId);
         return ResponseEntity.ok().body(response);
     }
 
-    @PostMapping("/confirmOperation") public ResponseEntity<?> confirmOperation(@RequestBody ConfirmRequest confirmRequest) throws BadRequestException {
-        String response = transferService.confirmOperation(confirmRequest.getOperationId());
-        return ResponseEntity.ok(new ConfirmRequest(response));
+    @PostMapping("/confirmOperation")
+    public ResponseEntity<String> confirmOperation(@RequestBody ConfirmRequest confirmRequest) {
+        String response = transferService.confirmOperation(confirmRequest.getRequest());
+        return ResponseEntity.ok().body(response);
     }
-        
 }

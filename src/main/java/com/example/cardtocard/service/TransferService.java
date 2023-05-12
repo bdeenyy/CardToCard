@@ -24,7 +24,7 @@ public class TransferService {
         this.transferLogger = transferLogger;
     }
 
-    public String transfer(TransferRequest transferRequest) throws UnauthorizedException, BadRequestException {
+    public String transfer(TransferRequest transferRequest){
         String operationId = UUID.randomUUID().toString().substring(3, 7);
         cardRepositoryImpl.saveCard(new Card(transferRequest.getCardFromNumber(), transferRequest.getCardFromValidTill(), transferRequest.getCardFromCVV()));
         cardRepositoryImpl.saveCard(new Card(transferRequest.getCardToNumber()));
@@ -33,27 +33,38 @@ public class TransferService {
 
         if (cardFrom == null || cardTo == null || !cardFrom.isValid(transferRequest.getCardFromValidTill(),
                 transferRequest.getCardFromCVV())) {
-            throw new UnauthorizedException("Данные карты не верны!");
+            try {
+                throw new UnauthorizedException("Данные карты не верны!");
+            } catch (UnauthorizedException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         return transaction(transferRequest, operationId, cardFrom, cardTo);
     }
 
-    private String transaction(TransferRequest transferRequest, String operationId, Card cardFrom, Card cardTo)throws BadRequestException {
+    private String transaction(TransferRequest transferRequest, String operationId, Card cardFrom, Card cardTo){
         Amount amount = new Amount(transferRequest.getAmount().getCurrency(),
                 transferRequest.getAmount().getValue()).multiply(BigDecimal.valueOf(0.01)); // format 0.00
         Amount commission = amount.multiply(BigDecimal.valueOf(0.01)); // 1% комиссии
         boolean success = cardFrom.withdraw(amount.add(commission));
         if (!success){
-            throw new BadRequestException("Не достаточно средств на счете");
+            try {
+                throw new BadRequestException("Не достаточно средств на счете");
+            } catch (BadRequestException e) {
+                throw new RuntimeException(e);
+            }
         }
         cardTo.deposit(amount);
         transferLogger.logTransfer(cardFrom, cardTo, amount, commission, true, operationId);
         return operationId;
     }
 
-
-    public String confirmOperation(String confirmRequest) throws BadRequestException{
+    public String confirmOperation(String confirmRequest){
+        try {
             return transferLogger.findTransaction(confirmRequest);
+        } catch (BadRequestException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
