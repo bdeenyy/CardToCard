@@ -9,7 +9,8 @@ public class Amount {
 
     private BigDecimal value;
 
-    public Amount() { }
+    public Amount() {
+    }
 
     public Amount(String currency, BigDecimal value) {
         this.value = value;

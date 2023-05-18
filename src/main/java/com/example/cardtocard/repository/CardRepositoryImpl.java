@@ -10,7 +10,11 @@ import java.util.concurrent.ConcurrentMap;
 
 @Repository
 public class CardRepositoryImpl implements CardRepository {
-    private ConcurrentMap<String, Card> cards = new ConcurrentHashMap<>();
+    private final ConcurrentMap<String, Card> cards;
+
+    static {
+        new ConcurrentHashMap<>();
+    }
 
     public CardRepositoryImpl() {
         this.cards = new ConcurrentHashMap<>();

@@ -37,18 +37,20 @@ public class TransferServiceTest {
         when(cardRepository.getCardByNumber("1234")).thenReturn(new Card("1234", "12/26", "123"));
 
         // Создание тестового запроса
-        TransferRequest transferRequest = new TransferRequest();
-        transferRequest.setCardFromNumber("1234");
-        transferRequest.setCardFromValidTill("12/26");
-        transferRequest.setCardFromCVV("123");
-        transferRequest.setCardToNumber("1234");
-        transferRequest.setAmount(new Amount("RUR", BigDecimal.valueOf(10000)));
+        TransferRequest transferRequest = new TransferRequest(
+                "1234",
+                "1234",
+                "123",
+                "12/26",
+                new Amount("RUR", BigDecimal.valueOf(10000))
+        );
+
 
         // Вызов тестируемого метода
         TransferResponse response = transferService.transfer(transferRequest);
 
         // Проверка результата
-        assertNotNull(response.getOperationId());
+        assertNotNull(response.operationId());
     }
 
     @Test
@@ -60,13 +62,12 @@ public class TransferServiceTest {
         listOfOperations.add("1234");
 
         // Создание тестового запроса
-        ConfirmRequest confirmRequest = new ConfirmRequest();
-        confirmRequest.setOperationId("1234");
+        ConfirmRequest confirmRequest = new ConfirmRequest("1234");
 
         // Вызов тестируемого метода
         TransferResponse response = transferService.confirmOperation(confirmRequest);
 
         // Проверка результата
-        assertEquals("1234", response.getOperationId());
+        assertEquals("1234", response.operationId());
     }
 }

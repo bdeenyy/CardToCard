@@ -29,10 +29,11 @@ public class TransferService {
 
     public TransferResponse transfer(TransferRequest transferRequest) {
         String operationId = UUID.randomUUID().toString().substring(3, 7);
-        cardRepositoryImpl.saveCard(new Card(transferRequest.getCardFromNumber(), transferRequest.getCardFromValidTill(), transferRequest.getCardFromCVV()));
-        cardRepositoryImpl.saveCard(new Card(transferRequest.getCardToNumber()));
-        Card cardFrom = cardRepositoryImpl.getCardByNumber(transferRequest.getCardFromNumber());
-        Card cardTo = cardRepositoryImpl.getCardByNumber(transferRequest.getCardToNumber());
+        cardRepositoryImpl.saveCard(new Card(transferRequest.cardFromNumber(), transferRequest.cardFromValidTill(), transferRequest.cardFromCVV()));
+        cardRepositoryImpl.saveCard(new Card(transferRequest.cardToNumber()));
+        Card cardFrom = cardRepositoryImpl.getCardByNumber(transferRequest.cardFromNumber());
+        Card cardTo = cardRepositoryImpl.getCardByNumber(transferRequest.cardToNumber());
+
         if (cardFrom == null || cardTo == null) {
             try {
                 throw new UnauthorizedException("Данные карты не верны!");
@@ -40,10 +41,11 @@ public class TransferService {
                 throw new RuntimeException(e);
             }
         }
-        Amount amount = new Amount(transferRequest.getAmount().getCurrency(), transferRequest.getAmount().getValue()).multiply(BigDecimal.valueOf(0.01)); // format 0.00
+        Amount amount = new Amount(transferRequest.amount().getCurrency(),
+                transferRequest.amount().getValue()).multiply(BigDecimal.valueOf(0.01)); // format 0.00
         Amount commission = amount.multiply(BigDecimal.valueOf(0.01)); // 1% комиссии
         boolean success = cardFrom.withdraw(amount.add(commission));
-        if (!success){
+        if (!success) {
             try {
                 throw new BadRequestException("Не достаточно средств на счете");
             } catch (BadRequestException e) {
@@ -57,7 +59,7 @@ public class TransferService {
     }
 
     public TransferResponse confirmOperation(ConfirmRequest confirmRequest) {
-        String operationId = confirmRequest.getOperationId();
+        String operationId = confirmRequest.operationId();
         if (listOfOperations.contains(operationId)) {
             return new TransferResponse(operationId);
         } else {
