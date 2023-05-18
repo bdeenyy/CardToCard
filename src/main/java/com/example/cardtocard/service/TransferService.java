@@ -19,9 +19,13 @@ import java.util.UUID;
 @Service
 public class TransferService {
     private final List<String> listOfOperations = new ArrayList<>();
-    CardRepositoryImpl cardRepositoryImpl;
+    private final CardRepositoryImpl cardRepositoryImpl;
+    private final TransferLogger transferLogger;
 
-    TransferLogger transferLogger;
+    public TransferService(CardRepositoryImpl cardRepositoryImpl, TransferLogger transferLogger) {
+        this.cardRepositoryImpl = cardRepositoryImpl;
+        this.transferLogger = transferLogger;
+    }
 
     public TransferResponse transfer(TransferRequest transferRequest) {
         String operationId = UUID.randomUUID().toString().substring(3, 7);
@@ -29,7 +33,7 @@ public class TransferService {
         cardRepositoryImpl.saveCard(new Card(transferRequest.getCardToNumber()));
         Card cardFrom = cardRepositoryImpl.getCardByNumber(transferRequest.getCardFromNumber());
         Card cardTo = cardRepositoryImpl.getCardByNumber(transferRequest.getCardToNumber());
-        if (cardFrom == null || cardTo == null || !cardFrom.isValid(transferRequest.getCardFromValidTill(), transferRequest.getCardFromCVV())) {
+        if (cardFrom == null || cardTo == null) {
             try {
                 throw new UnauthorizedException("Данные карты не верны!");
             } catch (UnauthorizedException e) {

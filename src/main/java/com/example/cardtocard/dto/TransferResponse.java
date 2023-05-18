@@ -4,6 +4,7 @@ public class TransferResponse {
     private String operationId;
 
     public TransferResponse(String operationId) {
+        this.operationId = operationId;
     }
 
     public String getOperationId() {
@@ -13,5 +14,5 @@ public class TransferResponse {
     public void setOperationId(String operationId) {
         this.operationId = operationId;
     }
-
 }
+

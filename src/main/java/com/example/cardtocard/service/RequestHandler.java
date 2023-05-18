@@ -4,7 +4,6 @@ import com.example.cardtocard.dto.ConfirmRequest;
 import com.example.cardtocard.dto.TransferRequest;
 
 import com.example.cardtocard.dto.TransferResponse;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 @Service

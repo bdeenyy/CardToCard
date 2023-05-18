@@ -43,5 +43,4 @@ public class Card {
     public void deposit(Amount amount) {
         balanceMap.merge(amount.getCurrency(), amount.getValue(), BigDecimal::add);
     }
-
 }
