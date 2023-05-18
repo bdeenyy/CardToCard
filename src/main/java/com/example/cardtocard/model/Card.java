@@ -10,19 +10,17 @@ public class Card {
     private String holderName;
     private String validTill;
     private String CVV;
-    private Map<String, BigDecimal> balanceMap = new HashMap<>();
+    private final Map<String, BigDecimal> balanceMap = new HashMap<>();
 
     public Card(String number, String validTill, String CVV) {
         this.number = number;
         this.validTill = validTill;
         this.CVV = CVV;
-        this.balanceMap = balanceMap;
         balanceMap.put("RUR", BigDecimal.valueOf(10000));
     }
 
     public Card(String number) {
         this.number = number;
-        this.balanceMap = balanceMap;
         balanceMap.put("RUR", BigDecimal.valueOf(10000));
     }
 
@@ -43,12 +41,7 @@ public class Card {
     }
 
     public void deposit(Amount amount) {
-        BigDecimal balance = balanceMap.get(amount.getCurrency());
-        if (balance == null) {
-            balanceMap.put(amount.getCurrency(), amount.getValue());
-        } else {
-            balanceMap.put(amount.getCurrency(), balance.add(amount.getValue()));
-        }
+        balanceMap.merge(amount.getCurrency(), amount.getValue(), BigDecimal::add);
     }
 
 }

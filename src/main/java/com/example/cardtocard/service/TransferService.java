@@ -1,5 +1,7 @@
 package com.example.cardtocard.service;
 
+import com.example.cardtocard.dto.ConfirmRequest;
+import com.example.cardtocard.dto.TransferResponse;
 import com.example.cardtocard.exception.BadRequestException;
 import com.example.cardtocard.exception.UnauthorizedException;
 import com.example.cardtocard.logger.TransferLogger;
@@ -10,42 +12,31 @@ import com.example.cardtocard.repository.CardRepositoryImpl;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Service
 public class TransferService {
-
+    private final List<String> listOfOperations = new ArrayList<>();
     CardRepositoryImpl cardRepositoryImpl;
 
     TransferLogger transferLogger;
 
-    public TransferService(CardRepositoryImpl cardRepositoryImpl, TransferLogger transferLogger) {
-        this.cardRepositoryImpl = cardRepositoryImpl;
-        this.transferLogger = transferLogger;
-    }
-
-    public String transfer(TransferRequest transferRequest){
+    public TransferResponse transfer(TransferRequest transferRequest) {
         String operationId = UUID.randomUUID().toString().substring(3, 7);
         cardRepositoryImpl.saveCard(new Card(transferRequest.getCardFromNumber(), transferRequest.getCardFromValidTill(), transferRequest.getCardFromCVV()));
         cardRepositoryImpl.saveCard(new Card(transferRequest.getCardToNumber()));
         Card cardFrom = cardRepositoryImpl.getCardByNumber(transferRequest.getCardFromNumber());
         Card cardTo = cardRepositoryImpl.getCardByNumber(transferRequest.getCardToNumber());
-
-        if (cardFrom == null || cardTo == null || !cardFrom.isValid(transferRequest.getCardFromValidTill(),
-                transferRequest.getCardFromCVV())) {
+        if (cardFrom == null || cardTo == null || !cardFrom.isValid(transferRequest.getCardFromValidTill(), transferRequest.getCardFromCVV())) {
             try {
                 throw new UnauthorizedException("Данные карты не верны!");
             } catch (UnauthorizedException e) {
                 throw new RuntimeException(e);
             }
         }
-
-        return transaction(transferRequest, operationId, cardFrom, cardTo);
-    }
-
-    private String transaction(TransferRequest transferRequest, String operationId, Card cardFrom, Card cardTo){
-        Amount amount = new Amount(transferRequest.getAmount().getCurrency(),
-                transferRequest.getAmount().getValue()).multiply(BigDecimal.valueOf(0.01)); // format 0.00
+        Amount amount = new Amount(transferRequest.getAmount().getCurrency(), transferRequest.getAmount().getValue()).multiply(BigDecimal.valueOf(0.01)); // format 0.00
         Amount commission = amount.multiply(BigDecimal.valueOf(0.01)); // 1% комиссии
         boolean success = cardFrom.withdraw(amount.add(commission));
         if (!success){
@@ -57,14 +48,20 @@ public class TransferService {
         }
         cardTo.deposit(amount);
         transferLogger.logTransfer(cardFrom, cardTo, amount, commission, true, operationId);
-        return operationId;
+        listOfOperations.add(operationId);
+        return new TransferResponse(operationId);
     }
 
-    public String confirmOperation(String confirmRequest){
-        try {
-            return transferLogger.findTransaction(confirmRequest);
-        } catch (BadRequestException e) {
-            throw new RuntimeException(e);
+    public TransferResponse confirmOperation(ConfirmRequest confirmRequest) {
+        String operationId = confirmRequest.getOperationId();
+        if (listOfOperations.contains(operationId)) {
+            return new TransferResponse(operationId);
+        } else {
+            try {
+                throw new BadRequestException("Операция не найдена");
+            } catch (BadRequestException e) {
+                throw new RuntimeException(e);
+            }
         }
     }
 }

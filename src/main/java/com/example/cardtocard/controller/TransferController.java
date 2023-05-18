@@ -2,35 +2,31 @@ package com.example.cardtocard.controller;
 
 import com.example.cardtocard.dto.ConfirmRequest;
 import com.example.cardtocard.dto.TransferRequest;
-import com.example.cardtocard.service.TransferService;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.example.cardtocard.service.RequestHandler;
+import com.example.cardtocard.dto.TransferResponse;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.Map;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping()
 public class TransferController {
-    private final TransferService transferService;
+    private final RequestHandler requestHandler;
 
-    @Autowired
-    public TransferController(TransferService transferService) {
-        this.transferService = transferService;
+    public TransferController(RequestHandler requestHandler) {
+        this.requestHandler = requestHandler;
     }
 
     @PostMapping("/transfer")
-    public ResponseEntity<Map<String, String>> transfer(@RequestBody TransferRequest transferRequest) {
-        String operationId = transferService.transfer(transferRequest);
-        Map<String, String> response = new HashMap<>();
-        response.put("operationId", operationId);
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<TransferResponse> transfer(@RequestBody TransferRequest transferRequest) {
+        return ResponseEntity.ok(requestHandler.handleTransferRequest(transferRequest));
     }
 
     @PostMapping("/confirmOperation")
-    public ResponseEntity<String> confirmOperation(@RequestBody ConfirmRequest confirmRequest) {
-        String response = transferService.confirmOperation(confirmRequest.getRequest());
-        return ResponseEntity.ok().body(response);
+    public ResponseEntity<TransferResponse> confirmOperation(@RequestBody ConfirmRequest confirmRequest) {
+        return ResponseEntity.ok(requestHandler.handleConfirmRequest(confirmRequest));
     }
 }
